@@ -187,7 +187,7 @@ async function loadGenres(retryCount = 0) {
             await initializeApi();
         }
         
-        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US`, {
+        const response = await fetch(`${BASE_URL}/json/stations`, {
             headers: {
                 'User-Agent': API_USER_AGENT
             }
@@ -281,7 +281,7 @@ async function loadStations(genre, retryCount = 0) {
             await initializeApi();
         }
         
-        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US`, {
+        const response = await fetch(`${BASE_URL}/json/stations`, {
             headers: {
                 'User-Agent': API_USER_AGENT
             }
@@ -689,7 +689,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Update version info
     const versionInfoElement = document.querySelector('.version-info');
     if (versionInfoElement) {
-        versionInfoElement.textContent = `US Radio v${APP_VERSION}`;
+        versionInfoElement.textContent = `Cyberpunk Radio v${APP_VERSION}`;
     }
 
     // Initialize API but don't load genres yet (wait for user to press "Start Listening")
