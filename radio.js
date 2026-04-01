@@ -187,12 +187,12 @@ async function loadGenres(retryCount = 0) {
             await initializeApi();
         }
         
-        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US`, {
+        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US?limit=0`, {
             headers: {
                 'User-Agent': API_USER_AGENT
             }
         });
-        
+
         if (!response.ok) {
             if (retryCount >= MAX_RETRIES) {
                 throw new Error(`Server failed after ${MAX_RETRIES} retries`);
@@ -281,12 +281,12 @@ async function loadStations(genre, retryCount = 0) {
             await initializeApi();
         }
         
-        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US`, {
+        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US?limit=0`, {
             headers: {
                 'User-Agent': API_USER_AGENT
             }
         });
-        
+
         if (!response.ok) {
             if (retryCount >= MAX_RETRIES) {
                 throw new Error(`Server failed after ${MAX_RETRIES} retries`);
