@@ -187,7 +187,7 @@ async function loadGenres(retryCount = 0) {
             await initializeApi();
         }
         
-        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US?limit=0`, {
+        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US`, {
             headers: {
                 'User-Agent': API_USER_AGENT
             }
@@ -281,7 +281,7 @@ async function loadStations(genre, retryCount = 0) {
             await initializeApi();
         }
         
-        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US?limit=0`, {
+        const response = await fetch(`${BASE_URL}/json/stations/bycountrycodeexact/US`, {
             headers: {
                 'User-Agent': API_USER_AGENT
             }
