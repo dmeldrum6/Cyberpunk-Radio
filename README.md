@@ -1,12 +1,12 @@
-# 🎧 Cyberpunk Radio - US Internet Radio Streaming App
+# 🎧 Cyberpunk Radio - Internet Radio Streaming App
 
-A futuristic, cyberpunk-themed internet radio streaming application that lets you discover and listen to thousands of radio stations from across the United States.
+A futuristic, cyberpunk-themed internet radio streaming application that lets you discover and listen to thousands of radio stations from across the world.
 ![cpunk_radio_genres](https://github.com/user-attachments/assets/521717e2-4d2b-441c-a8fa-ee53fce5964d)
 ![cpunk_radio_playing](https://github.com/user-attachments/assets/1e986918-544d-4f4d-bc6e-8365e88257d9)
 
 ## ✨ Features
 
-- 🎵 **Stream thousands of US radio stations** - Access a vast collection of radio stations across various genres
+- 🎵 **Stream thousands of radio stations** - Access a vast collection of radio stations across various genres
 - 🎨 **Cyberpunk UI** - Immersive neon-lit interface with glitch effects and animations
 - 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
 - 🔍 **Smart Search** - Quickly find stations by name or tags
