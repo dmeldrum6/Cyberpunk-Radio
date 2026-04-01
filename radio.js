@@ -44,6 +44,7 @@ const networkStatus = document.getElementById('network-status');
 let currentStations = [];
 let isPlaying = false;
 let currentStation = null;
+let scrollListenerAdded = false;
 
 // Set theme based on system preference
 function setTheme() {
@@ -175,7 +176,8 @@ function hideLoading(type) {
 }
 
 // Load genres
-async function loadGenres() {
+async function loadGenres(retryCount = 0) {
+    const MAX_RETRIES = 3;
     showLoading('genres');
     genresContainer.innerHTML = '';
 
@@ -192,10 +194,12 @@ async function loadGenres() {
         });
         
         if (!response.ok) {
-            // If this server fails, try to get another one
+            if (retryCount >= MAX_RETRIES) {
+                throw new Error(`Server failed after ${MAX_RETRIES} retries`);
+            }
             console.log('Server request failed, trying another server...');
             await initializeApi();
-            return loadGenres(); // Retry with new server
+            return loadGenres(retryCount + 1);
         }
         
         const stations = await response.json();
@@ -263,7 +267,8 @@ async function loadGenres() {
 }
 
 // Load stations for a selected genre
-async function loadStations(genre) {
+async function loadStations(genre, retryCount = 0) {
+    const MAX_RETRIES = 3;
     showLoading('stations');
     stationsContainer.innerHTML = '';
     
@@ -283,10 +288,12 @@ async function loadStations(genre) {
         });
         
         if (!response.ok) {
-            // If this server fails, try to get another one
+            if (retryCount >= MAX_RETRIES) {
+                throw new Error(`Server failed after ${MAX_RETRIES} retries`);
+            }
             console.log('Server request failed, trying another server...');
             await initializeApi();
-            return loadStations(genre); // Retry with new server
+            return loadStations(genre, retryCount + 1);
         }
         
         const stations = await response.json();
@@ -316,9 +323,12 @@ async function loadStations(genre) {
         
         // Toggle back to top button
         toggleBackToTopButton();
-        
-        // Listen for scroll events
-        window.addEventListener('scroll', toggleBackToTopButton, { passive: true });
+
+        // Listen for scroll events (only register once)
+        if (!scrollListenerAdded) {
+            window.addEventListener('scroll', toggleBackToTopButton, { passive: true });
+            scrollListenerAdded = true;
+        }
     } catch (error) {
         console.error('Error loading stations:', error);
         stationsContainer.innerHTML = '<div class="error-container">Error loading stations. Please try again later.</div>';
@@ -582,15 +592,20 @@ function setupTabs() {
 }
 
 // Network listeners
-window.addEventListener('online', () => {
+window.addEventListener('online', async () => {
     networkStatus.textContent = 'You are back online!';
-    networkStatus.style.background = 'var(--secondary-color)';
+    networkStatus.style.background = '#fd3777';
     networkStatus.classList.add('visible');
-    
+
     setTimeout(() => {
         networkStatus.classList.remove('visible');
     }, 3000);
-    
+
+    // Reinitialize the API if needed
+    if (!BASE_URL) {
+        await initializeApi();
+    }
+
     // Reload content if needed
     if (document.body.classList.contains('genre-view') && genresContainer.children.length === 0) {
         loadGenres();
@@ -599,7 +614,7 @@ window.addEventListener('online', () => {
 
 window.addEventListener('offline', () => {
     networkStatus.textContent = 'You are offline. Please check your connection.';
-    networkStatus.style.background = 'var(--error)';
+    networkStatus.style.background = '#ff3252';
     networkStatus.classList.add('visible');
 });
 
@@ -667,10 +682,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Search functionality
     searchInput.addEventListener('input', filterStations);
-    
+
     // Setup tabs for about page
     setupTabs();
-    
+
+    // Update version info
+    const versionInfoElement = document.querySelector('.version-info');
+    if (versionInfoElement) {
+        versionInfoElement.textContent = `US Radio v${APP_VERSION}`;
+    }
+
     // Initialize API but don't load genres yet (wait for user to press "Start Listening")
     if (!window.cordova) {
         await initializeApi();
@@ -711,35 +732,6 @@ document.addEventListener('deviceready', async () => {
     // Initialize API but don't load genres yet (wait for user to press "Start Listening")
     await initializeApi();
 }, false);
-
-// Add API retry capability on network reconnection
-window.addEventListener('online', async () => {
-    networkStatus.textContent = 'You are back online!';
-    networkStatus.style.background = 'var(--secondary-color)';
-    networkStatus.classList.add('visible');
-    
-    setTimeout(() => {
-        networkStatus.classList.remove('visible');
-    }, 3000);
-    
-    // Reinitialize the API if needed
-    if (!BASE_URL) {
-        await initializeApi();
-    }
-    
-    // Reload content if needed
-    if (document.body.classList.contains('genre-view') && genresContainer.children.length === 0) {
-        loadGenres();
-    }
-});
-
-// Dynamically update version info
-document.addEventListener('DOMContentLoaded', () => {
-    const versionInfoElement = document.querySelector('.version-info');
-    if (versionInfoElement) {
-        versionInfoElement.textContent = `US Radio v${APP_VERSION}`;
-    }
-});
 
 // Error handling for API calls
 function handleApiError(error, retryFunction) {
